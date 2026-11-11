@@ -135,6 +135,8 @@ fail closed if its bytes change:
 ```text
 contracts/precedent_protocol.py  deployable single-file contract
 tests/                           deterministic and consensus-boundary tests
+tests_integration/               official gltest network integration checks
+gltest.config.yaml               conservative Studionet polling configuration
 docs/CONSENSUS.md                leader/validator protocol
 docs/STATE-MODEL.md              records, transitions, and invariants
 docs/THREAT-MODEL.md             adversaries and residual risk
@@ -154,6 +156,16 @@ The initial suite contains **21 tests** covering party authorization, immutable
 policies, evidence hashing, HTTP failure, forced abstention, malformed model
 output, validator disagreement, precedent compatibility, append-only review,
 reversal, round limits, dedupe, and prompt-injection boundaries.
+
+Official integration checks are separate because they deploy and execute live
+validator consensus:
+
+```bash
+python3 -m venv .venv-integration
+.venv-integration/bin/pip install -r requirements-integration.txt
+.venv-integration/bin/gltest --network studionet \
+  tests_integration/test_precedent_protocol.py
+```
 
 ## Hard boundaries
 

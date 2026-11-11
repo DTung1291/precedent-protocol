@@ -1,0 +1,10 @@
+networks:
+  default: studionet
+  studionet:
+    # Studionet is rate-limited and full-consensus decisions may rotate a
+    # leader. Poll conservatively for up to 25 minutes per transaction.
+    default_wait_interval: 60000
+    default_wait_retries: 25
+  localnet:
+    url: "http://127.0.0.1:4000/api"
+    leader_only: false

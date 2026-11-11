@@ -1,0 +1,162 @@
+{
+  "ctor": {
+    "params": [],
+    "kwparams": {}
+  },
+  "methods": {
+    "create_policy": {
+      "params": [
+        [
+          "name",
+          "string"
+        ],
+        [
+          "standard",
+          "string"
+        ],
+        [
+          "outcomes_json",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    },
+    "decide": {
+      "params": [
+        [
+          "case_id",
+          "int"
+        ],
+        [
+          "review_note",
+          "string"
+        ],
+        [
+          "review_evidence_json",
+          "string"
+        ],
+        [
+          "precedent_ids_json",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    },
+    "get_case": {
+      "params": [
+        [
+          "case_id",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_case_count": {
+      "params": [],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "int"
+    },
+    "get_case_rounds": {
+      "params": [
+        [
+          "case_id",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "array"
+    },
+    "get_policy": {
+      "params": [
+        [
+          "policy_id",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_policy_count": {
+      "params": [],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "int"
+    },
+    "get_round": {
+      "params": [
+        [
+          "round_id",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_round_count": {
+      "params": [],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "int"
+    },
+    "open_case": {
+      "params": [
+        [
+          "policy_id",
+          "int"
+        ],
+        [
+          "respondent_address",
+          "string"
+        ],
+        [
+          "question",
+          "string"
+        ],
+        [
+          "claimant_statement",
+          "string"
+        ],
+        [
+          "evidence_json",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    },
+    "submit_response": {
+      "params": [
+        [
+          "case_id",
+          "int"
+        ],
+        [
+          "respondent_statement",
+          "string"
+        ],
+        [
+          "evidence_json",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "any",
+      "payable": false
+    }
+  }
+}

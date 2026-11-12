@@ -42,6 +42,25 @@ The source was transferred to Studio from its exact base64 representation and
 verified as 26,337 bytes with the SHA-256 above before deployment. Studio then
 reported `ACCEPTED`, `Reached consensus`, and `Contract deployed`.
 
+### V2 live two-party workflow
+
+The deployed V2 contract was exercised through the complete two-party path
+with four commit-pinned evidence items. Both party writes finalized, while the
+semantic decision exhausted leader rotation without majority agreement:
+
+| Action | Finalized transaction | Result |
+|---|---|---|
+| Create policy 1 | [`0xd5af680adb3da2e5d293e78b2d11f565d658c7a8f03c8a87003dc35aa6fde938`](https://explorer-studio.genlayer.com/tx/0xd5af680adb3da2e5d293e78b2d11f565d658c7a8f03c8a87003dc35aa6fde938) | `ACCEPTED` |
+| Open case 1 | [`0x142d44785277d24574b58cc69a32867398d960025bc65c7a685e493f24a77ce0`](https://explorer-studio.genlayer.com/tx/0x142d44785277d24574b58cc69a32867398d960025bc65c7a685e493f24a77ce0) | `ACCEPTED` |
+| Submit respondent response | [`0x220570500ca5f936850e0195903e8d9724cf2c1c1e4022d412a02d0480d2f754`](https://explorer-studio.genlayer.com/tx/0x220570500ca5f936850e0195903e8d9724cf2c1c1e4022d412a02d0480d2f754) | `ACCEPTED` |
+| Decide case 1 | [`0xe99ba726ae6737e90f52d5891711d51e0c3dc7cffb24bcf9df26507ca8c375aa`](https://explorer-studio.genlayer.com/tx/0xe99ba726ae6737e90f52d5891711d51e0c3dc7cffb24bcf9df26507ca8c375aa) | `UNDETERMINED` |
+
+The decision rotated the leader after repeated majority disagreement and then
+finalized as `UNDETERMINED`. The fail-closed invariant held: immediately after
+finalization, accepted-state `get_round_count()` returned `0`, so no verdict,
+partial panel, or false approval was appended. This live result is evidence of
+safe refusal, not a claim that the V2 scenario reached a substantive verdict.
+
 ## Live fail-closed scenario
 
 The first full two-party workflow is finalized on Studionet:

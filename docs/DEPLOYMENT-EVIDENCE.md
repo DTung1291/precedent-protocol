@@ -19,14 +19,24 @@ Studio exposed all seven read methods and all four write methods after the
 deployment reached consensus. The source was hash-checked before it was loaded
 into Studio; the hash above is the exact deployed single-file contract.
 
-## Live scenario evidence still to record
+## Live fail-closed scenario
 
-Deployment is complete. The following application transactions are deliberately
-not claimed yet and will be added only after their live runs finalize:
+The first full two-party workflow is finalized on Studionet:
 
-- a policy, two-party case, response, and first decision;
-- a related case that explicitly treats the first case as precedent;
-- an append-only review round that affirms or reverses a result;
-- exact public evidence URLs and content hashes for those cases;
-- `get_case`, `get_round`, and `get_case_rounds` outputs;
-- notable leader rotation, abstention, or validator disagreement findings.
+| Action | Finalized transaction |
+|---|---|
+| Create policy | [`0x86fe014b6a71f80c8d9ce1e89377e6634b16db6a2ad8afde14fe2b848d6126e0`](https://explorer-studio.genlayer.com/tx/0x86fe014b6a71f80c8d9ce1e89377e6634b16db6a2ad8afde14fe2b848d6126e0) |
+| Open case 1 | [`0x9430300da998df0e1cb0851f7b3cfc7fe1d48062112f7e2ce6825f0bccc7f011`](https://explorer-studio.genlayer.com/tx/0x9430300da998df0e1cb0851f7b3cfc7fe1d48062112f7e2ce6825f0bccc7f011) |
+| Submit response | [`0x4166b5b68cf2330bab9c6f9ef63886a32ced30c6faa4eb684034b2db26ba4700`](https://explorer-studio.genlayer.com/tx/0x4166b5b68cf2330bab9c6f9ef63886a32ced30c6faa4eb684034b2db26ba4700) |
+| Decide round 1 | [`0x24c26fc561f3983a494d98a000338bd0eac9d96bec11f0225b4ae9b0a19dc491`](https://explorer-studio.genlayer.com/tx/0x24c26fc561f3983a494d98a000338bd0eac9d96bec11f0225b4ae9b0a19dc491) |
+
+Case 1 intentionally exposed the runtime boundary: the 26,102-byte source file
+exceeded the 16,000-byte per-item cap. `get_round(1)` therefore returns
+`basis_status=EVIDENCE_UNAVAILABLE`, `verdict=ABSTAIN`,
+`contestability_milli=1000`, five `ABSTAIN` opinions, and the reason
+`ValueError: evidence exceeds per-item byte limit`. This demonstrates that an
+oversized or unavailable source cannot produce a substantive approval.
+
+The repository now includes bounded source parts and a reconstruction check for
+a second substantive live case. Additional transactions are recorded only once
+they finalize.

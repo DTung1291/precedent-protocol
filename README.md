@@ -9,9 +9,11 @@ counterarguments, and contestability into reusable on-chain state.
 Two named parties submit opposing statements and content-addressed public
 evidence. A GenLayer leader evaluates the case through five deliberately
 different lenses. Validators independently fetch the same bytes and audit the
-proposal against five explicit proof obligations. A report is stored only when
-every validator audit supports its evidence, policy application,
-counterargument, precedent treatment, and deterministically derived verdict.
+proposal against five explicit proof obligations. A substantive report is
+stored only when every validator audit supports its evidence, policy
+application, counterargument, precedent treatment, and deterministically
+derived verdict. Evidence or model failures may persist only as an explicitly
+labelled `ABSTAIN` record, never as substantive approval.
 
 > A decision is more useful when downstream builders can see both what won and
 > how difficult the decision was.
@@ -66,12 +68,14 @@ immutable policy + two parties + hash-bound evidence + selected precedents
        all checks supported          any failed check
                  |                             |
                  v                             v
-       append-only decision round      no state transition
+     substantive decision round        transaction rejected
+
+       fetch/model unavailable -> explicit ABSTAIN round
 ```
 
 Validators do not approve a schema-only response and do not generate a second,
 potentially unrelated verdict. They independently audit the proposed reasoning.
-A write requires all five proof obligations to pass:
+A substantive write requires all five proof obligations to pass:
 
 - every material claim is supported by independently verified evidence bytes;
 - the immutable policy standard is applied;
@@ -80,8 +84,9 @@ A write requires all five proof obligations to pass:
 - lens votes support the verdict and contestability derived by contract code.
 
 HTTP errors, changed content, oversized evidence, and unavailable sources can
-only produce the safe `ABSTAIN` fallback. They cannot produce a favorable
-substantive verdict.
+only produce the safe, non-substantive `ABSTAIN` fallback. A malformed or
+unsupported audit cannot approve a leader proposal. Neither path can produce a
+favorable substantive verdict.
 
 ## Precedent without ossification
 
@@ -148,17 +153,20 @@ DECISIONS.md                     engineering decisions and live findings
 
 ## Live Studionet deployment
 
-- V2 contract: [`0x2ccDE15D1504F7978fa46C2D82Ed44B603d6C0ec`](https://explorer-studio.genlayer.com/address/0x2ccDE15D1504F7978fa46C2D82Ed44B603d6C0ec)
-- Deployment transaction: [`0x579ca5a0fe5a6cfc318100c027559cd9e30b1c3a6ebf7e631f94bdd174ca1b96`](https://explorer-studio.genlayer.com/tx/0x579ca5a0fe5a6cfc318100c027559cd9e30b1c3a6ebf7e631f94bdd174ca1b96)
-- Deployed source commit: [`767ff13904f20c625845afbf6acb4d9fe409ca47`](https://github.com/DTung1291/precedent-protocol/tree/767ff13904f20c625845afbf6acb4d9fe409ca47)
-- Contract source SHA-256: `f0a54d3c751cba7baf949f39afa2c3a5945444677efb774ab659cbfe203e3ff0`
+- V3 contract: [`0x487F08b954b598F47C74524abeE132e27992b268`](https://explorer-studio.genlayer.com/address/0x487F08b954b598F47C74524abeE132e27992b268)
+- Deployment transaction: [`0x4003195f306b1794c97afdfc1f6cb4b8df339df3f53a67067f8b98d7111a3d53`](https://explorer-studio.genlayer.com/tx/0x4003195f306b1794c97afdfc1f6cb4b8df339df3f53a67067f8b98d7111a3d53)
+- Deployed source commit: [`eb0b23e7ff19216dafe7e29a29b2de12d09e1ca2`](https://github.com/DTung1291/precedent-protocol/tree/eb0b23e7ff19216dafe7e29a29b2de12d09e1ca2)
+- Contract source SHA-256: `fa4f6c3dd434c5043061a7b0c39f58ec18c644c837ad06c3dba8f6d016e04cdb`
+- Proof-audited decision: [`0xa0c1ac70046a0579409407f69cd38b897244ac0bc5caaf1313cdcbbd54dc8ca8`](https://explorer-studio.genlayer.com/tx/0xa0c1ac70046a0579409407f69cd38b897244ac0bc5caaf1313cdcbbd54dc8ca8) — `CLAIMANT`, contestability `0`
 
 The deployment reached `ACCEPTED` under Studio's Normal (Full Consensus)
-execution mode. A complete V2 two-party workflow finalized all deterministic
-writes; its decision transaction returned `UNDETERMINED` and left the round
-ledger unchanged at zero. See [the deployment evidence record](docs/DEPLOYMENT-EVIDENCE.md)
-for the exact transaction hashes and fail-closed result. The original V1
-deployment remains documented there for reproducibility.
+execution mode. A complete V3 two-party workflow then finalized a five-lens,
+proof-audited decision in its first leader round. Accepted-state reads return
+`basis_status=OK`, `current_verdict=CLAIMANT`, and
+`current_contestability_milli=0`. See
+[the deployment evidence record](docs/DEPLOYMENT-EVIDENCE.md) for every
+transaction and the deliberately over-strict policy test that the same
+contract rejected. V1 and V2 remain documented there for reproducibility.
 
 ## Verify locally
 

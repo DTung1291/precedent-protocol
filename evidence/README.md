@@ -39,13 +39,16 @@ The original V1 files above remain unchanged.
 Concatenating the V2 parts produces 26,337 bytes and SHA-256
 `f0a54d3c751cba7baf949f39afa2c3a5945444677efb774ab659cbfe203e3ff0`.
 
-## V3 candidate
+## V3 deployed source
 
-The `v3/` directory contains the complete V3 candidate source. V3 replaces
+The `v3/` directory contains the exact V3 source deployed at
+[`0x487F08b954b598F47C74524abeE132e27992b268`](https://explorer-studio.genlayer.com/address/0x487F08b954b598F47C74524abeE132e27992b268)
+from commit `eb0b23e7ff19216dafe7e29a29b2de12d09e1ca2`. V3 replaces
 independent free-form panel regeneration with five bounded semantic proof
 obligations over the leader's canonical panel. Validators still fetch and hash
-every evidence item independently, and any failed or malformed audit rejects
-the state transition.
+every evidence item independently. Any failed or malformed proof audit rejects
+the proposed substantive transition; unavailable evidence is recorded only as
+the explicit fail-closed `ABSTAIN` fallback.
 
 | Item | Bytes | SHA-256 |
 |---|---:|---|

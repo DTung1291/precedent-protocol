@@ -8,9 +8,10 @@ counterarguments, and contestability into reusable on-chain state.
 
 Two named parties submit opposing statements and content-addressed public
 evidence. A GenLayer leader evaluates the case through five deliberately
-different lenses. Validators independently fetch the same bytes, produce their
-own five-lens panel, and accept the proposal only when the substantive verdict,
-contestability band, and treatment of every cited precedent agree.
+different lenses. Validators independently fetch the same bytes and audit the
+proposal against five explicit proof obligations. A report is stored only when
+every validator audit supports its evidence, policy application,
+counterargument, precedent treatment, and deterministically derived verdict.
 
 > A decision is more useful when downstream builders can see both what won and
 > how difficult the decision was.
@@ -58,24 +59,25 @@ immutable policy + two parties + hash-bound evidence + selected precedents
          contract derives verdict and contestability in code
                                 |
                                 v
-           validators independently fetch and deliberate
+          validators independently fetch and proof-audit
                                 |
                  +--------------+--------------+
                  |                             |
-       compatible substance             disagreement
+       all checks supported          any failed check
                  |                             |
                  v                             v
        append-only decision round      no state transition
 ```
 
-Validators do not approve a schema-only response. They independently repeat
-the semantic work. A write requires:
+Validators do not approve a schema-only response and do not generate a second,
+potentially unrelated verdict. They independently audit the proposed reasoning.
+A write requires all five proof obligations to pass:
 
-- the same derived verdict;
-- contestability within the explicit 0–400 substantive-majority band;
-- the same `APPLY`, `DISTINGUISH`, `CONFLICT`, or `IRRELEVANT` relation for
-  every submitted precedent;
-- independently verified evidence bytes matching every submitted SHA-256.
+- every material claim is supported by independently verified evidence bytes;
+- the immutable policy standard is applied;
+- the strongest material counterargument is fairly addressed;
+- every `APPLY`, `DISTINGUISH`, `CONFLICT`, or `IRRELEVANT` relation is supported;
+- lens votes support the verdict and contestability derived by contract code.
 
 HTTP errors, changed content, oversized evidence, and unavailable sources can
 only produce the safe `ABSTAIN` fallback. They cannot produce a favorable
@@ -166,9 +168,9 @@ python3 -m venv .venv
 ./scripts/check.sh
 ```
 
-The initial suite contains **21 tests** covering party authorization, immutable
+The suite contains **22 tests** covering party authorization, immutable
 policies, evidence hashing, HTTP failure, forced abstention, malformed model
-output, validator disagreement, precedent compatibility, append-only review,
+output, failed or malformed proof audits, precedent compatibility, append-only review,
 reversal, round limits, dedupe, and prompt-injection boundaries.
 
 Official integration checks are separate because they deploy and execute live

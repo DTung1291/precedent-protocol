@@ -20,9 +20,10 @@ panel stored beside it.
 
 ## D-004 — Precedent is explicit input
 
-Parties select a bounded list of prior same-policy cases. Validators must agree
-whether each applies, conflicts, is distinguishable, or is irrelevant. The
-contract does not perform nondeterministic precedent search.
+Parties select a bounded list of prior same-policy cases. The leader must state
+whether each applies, conflicts, is distinguishable, or is irrelevant, and
+validators must affirm that each stated relation is supported. The contract
+does not perform nondeterministic precedent search.
 
 ## D-005 — Reviews append, never overwrite
 
@@ -43,3 +44,13 @@ The linter advertised runner
 contract therefore pins the runner already validated by Studio and the local
 toolchain. A runner upgrade will be a separately tested change, never a
 metadata-only edit.
+
+## D-008 — Verify a proof-carrying panel instead of regenerating it
+
+V2 asked every validator to generate a complete independent five-lens panel.
+The live run safely refused to finalize, but free-form panel regeneration made
+liveness depend on multiple models choosing the same outcome labels. V3 keeps
+the leader's canonical, deterministically scored panel and makes validators
+audit five bounded proof obligations against independently fetched evidence.
+Any unsupported or malformed audit still rejects the write; validators cannot
+repair the proposal or substitute their own verdict.

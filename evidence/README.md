@@ -24,9 +24,9 @@ The split is only a transport representation for the contract's bounded web
 reader. The deployable source of record remains
 `contracts/precedent_protocol.py`.
 
-## V2 candidate
+## V2 deployment source
 
-The `v2/` directory contains the complete V2 candidate source. It widens only
+The `v2/` directory contains the exact deployed V2 source. It widens only
 the validator equivalence rule: once substantive verdict and all precedent
 relations match, 3–2 through 5–0 majority strengths are consensus-equivalent.
 The original V1 files above remain unchanged.
@@ -38,3 +38,19 @@ The original V1 files above remain unchanged.
 
 Concatenating the V2 parts produces 26,337 bytes and SHA-256
 `f0a54d3c751cba7baf949f39afa2c3a5945444677efb774ab659cbfe203e3ff0`.
+
+## V3 candidate
+
+The `v3/` directory contains the complete V3 candidate source. V3 replaces
+independent free-form panel regeneration with five bounded semantic proof
+obligations over the leader's canonical panel. Validators still fetch and hash
+every evidence item independently, and any failed or malformed audit rejects
+the state transition.
+
+| Item | Bytes | SHA-256 |
+|---|---:|---|
+| `v3/precedent_protocol.part-1.py` | 15,000 | `da783cae7d0d140b1d46f943400222c9773634af3756e49a4732e291b6cc0cb3` |
+| `v3/precedent_protocol.part-2.py` | 12,469 | `36631919938dad62faaf33cd80720e41531533f1b8a07a2953d1eb05e1f4d1ce` |
+
+Concatenating the V3 parts produces 27,469 bytes and SHA-256
+`fa4f6c3dd434c5043061a7b0c39f58ec18c644c837ad06c3dba8f6d016e04cdb`.

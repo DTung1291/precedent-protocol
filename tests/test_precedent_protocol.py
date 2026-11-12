@@ -128,6 +128,27 @@ def make_panel(winner="CLAIMANT", minority="RESPONDENT", winner_count=4, precede
     }
 
 
+def make_audit(failed=None):
+    checks = (
+        "EVIDENCE_SUPPORT",
+        "POLICY_APPLICATION",
+        "COUNTERARGUMENT_FAIRNESS",
+        "PRECEDENT_RELATIONS",
+        "VERDICT_DERIVATION",
+    )
+    return {
+        "checks": [
+            {
+                "check": check,
+                "passed": check != failed,
+                "reason": "The proposed report satisfies this bounded proof obligation."
+                if check != failed else "The proposed report is unsupported on this obligation.",
+            }
+            for check in checks
+        ]
+    }
+
+
 class PrecedentProtocolTests(unittest.TestCase):
     def setUp(self):
         self.runtime = Runtime()
@@ -169,7 +190,7 @@ class PrecedentProtocolTests(unittest.TestCase):
         return case_id
 
     def decide(self, case_id, leader=None, validator=None, note="", review_evidence="[]", precedents=()):
-        self.runtime.prompt_results = [leader or make_panel(), validator or make_panel()]
+        self.runtime.prompt_results = [leader or make_panel(), validator or make_audit()]
         return self.contract.decide(case_id, note, review_evidence, json.dumps(list(precedents)))
 
     def test_policy_is_immutable_content_addressed_state(self):
@@ -228,9 +249,8 @@ class PrecedentProtocolTests(unittest.TestCase):
         case_id = self.open_ready_case(outcomes := self.create_policy(("CLAIMANT", "RESPONDENT", "SPLIT")))
         leader = make_panel("CLAIMANT", "RESPONDENT", 2)
         leader["opinions"][-1]["verdict"] = "SPLIT"
-        validator = json.loads(json.dumps(leader))
         self.set_sender(CLAIMANT)
-        round_id = self.decide(case_id, leader, validator)
+        round_id = self.decide(case_id, leader)
         report = self.contract.get_round(round_id)["report"]
         self.assertEqual(report["verdict"], "ABSTAIN")
         self.assertEqual(report["contestability_milli"], 1000)
@@ -241,18 +261,18 @@ class PrecedentProtocolTests(unittest.TestCase):
         with self.assertRaises(UserError):
             self.decide(case_id)
 
-    def test_validator_verdict_mismatch_prevents_state_write(self):
+    def test_failed_validator_proof_obligation_prevents_state_write(self):
         case_id = self.open_ready_case()
         self.set_sender(CLAIMANT)
         with self.assertRaises(ConsensusDisagreement):
-            self.decide(case_id, make_panel("CLAIMANT"), make_panel("RESPONDENT", "CLAIMANT"))
+            self.decide(case_id, make_panel("CLAIMANT"), make_audit("EVIDENCE_SUPPORT"))
         self.assertEqual(self.contract.get_round_count(), 0)
         self.assertEqual(self.contract.get_case(case_id)["status"], "READY")
 
-    def test_same_verdict_majority_strengths_are_consensus_equivalent(self):
+    def test_valid_proof_audit_accepts_deterministically_derived_majority(self):
         case_id = self.open_ready_case()
         self.set_sender(CLAIMANT)
-        round_id = self.decide(case_id, make_panel(winner_count=5), make_panel(winner_count=3))
+        round_id = self.decide(case_id, make_panel(winner_count=5), make_audit())
         report = self.contract.get_round(round_id)["report"]
         self.assertEqual(report["verdict"], "CLAIMANT")
         self.assertEqual(report["contestability_milli"], 0)
@@ -261,7 +281,14 @@ class PrecedentProtocolTests(unittest.TestCase):
         case_id = self.open_ready_case()
         self.set_sender(CLAIMANT)
         with self.assertRaises(ConsensusDisagreement):
-            self.decide(case_id, {"verdict": "CLAIMANT"}, make_panel())
+            self.decide(case_id, {"verdict": "CLAIMANT"}, make_audit())
+
+    def test_malformed_validator_audit_prevents_state_write(self):
+        case_id = self.open_ready_case()
+        self.set_sender(CLAIMANT)
+        with self.assertRaises(ConsensusDisagreement):
+            self.decide(case_id, validator={"checks": []})
+        self.assertEqual(self.contract.get_round_count(), 0)
 
     def test_content_hash_failure_fails_closed_to_abstain(self):
         case_id = self.open_ready_case(claimant_evidence=self.evidence(correct=False))
@@ -304,18 +331,16 @@ class PrecedentProtocolTests(unittest.TestCase):
         with self.assertRaises(UserError):
             self.decide(current, precedents=(foreign,))
 
-    def test_precedent_relation_mismatch_prevents_write(self):
+    def test_unsupported_precedent_relation_prevents_write(self):
         policy_id = self.create_policy()
         prior = self.open_ready_case(policy_id, question="Prior question")
         self.set_sender(CLAIMANT)
         self.decide(prior)
         current = self.open_ready_case(policy_id, question="Current question")
         leader = make_panel(precedents=(prior,))
-        validator = make_panel(precedents=(prior,))
-        validator["precedent_treatments"][0]["relation"] = "DISTINGUISH"
         self.set_sender(CLAIMANT)
         with self.assertRaises(ConsensusDisagreement):
-            self.decide(current, leader, validator, precedents=(prior,))
+            self.decide(current, leader, make_audit("PRECEDENT_RELATIONS"), precedents=(prior,))
 
     def test_review_is_append_only_and_can_reverse_current_verdict(self):
         case_id = self.open_ready_case()
@@ -324,7 +349,7 @@ class PrecedentProtocolTests(unittest.TestCase):
         second = self.decide(
             case_id,
             make_panel("RESPONDENT", "CLAIMANT"),
-            make_panel("RESPONDENT", "CLAIMANT"),
+            make_audit(),
             note="The first round overlooked the acceptance timestamp.",
         )
         case = self.contract.get_case(case_id)

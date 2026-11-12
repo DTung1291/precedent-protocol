@@ -37,6 +37,29 @@ exceeded the 16,000-byte per-item cap. `get_round(1)` therefore returns
 `ValueError: evidence exceeds per-item byte limit`. This demonstrates that an
 oversized or unavailable source cannot produce a substantive approval.
 
-The repository now includes bounded source parts and a reconstruction check for
-a second substantive live case. Additional transactions are recorded only once
-they finalize.
+## Bounded evidence and semantic disagreement
+
+Commit
+[`0959faa2b8d2082f0b475ba53772c627b015c629`](https://github.com/DTung1291/precedent-protocol/tree/0959faa2b8d2082f0b475ba53772c627b015c629)
+adds two evidence parts below the per-item cap. Their byte-for-byte
+concatenation reproduces the deployed source and its recorded SHA-256. Case 2
+used those parts plus the consensus, state-model, deployment, and threat-model
+documents: seven hash-pinned items totaling 35,698 bytes.
+
+| Action | Finalized transaction | Result |
+|---|---|---|
+| Open case 2 | [`0x2a8c57a7c7d799dc15d583425b325009b8d7468814b214b2c244d6e273854ebe`](https://explorer-studio.genlayer.com/tx/0x2a8c57a7c7d799dc15d583425b325009b8d7468814b214b2c244d6e273854ebe) | `ACCEPTED` |
+| Submit response | [`0x7601b89b7cc8cf77cb4f6b5744fc16d0adde2370bbf4c5fc5b96e60e2256eb44`](https://explorer-studio.genlayer.com/tx/0x7601b89b7cc8cf77cb4f6b5744fc16d0adde2370bbf4c5fc5b96e60e2256eb44) | `ACCEPTED` |
+| Decide with case 1 as precedent | [`0x960a4e82dbafec18e8d70886214d806771de7e409a1185963d8ea7af426eb326`](https://explorer-studio.genlayer.com/tx/0x960a4e82dbafec18e8d70886214d806771de7e409a1185963d8ea7af426eb326) | `UNDETERMINED` |
+| Decide without a precedent | [`0xa111e9c2fa5d3735406155110eb9689329216dc101eed572cca0cccb510f6c67`](https://explorer-studio.genlayer.com/tx/0xa111e9c2fa5d3735406155110eb9689329216dc101eed572cca0cccb510f6c67) | `UNDETERMINED` |
+
+Both decision attempts rotated the leader three times after majority
+disagreement, then finalized as `UNDETERMINED`. Removing the precedent did not
+remove the disagreement, isolating it to the substantive verdict or derived
+contestability rather than precedent classification. The contract correctly
+made the non-consensus paths unable to update case state: `get_round_count()`
+remained `1`, so case 2 created no false approval or partial decision.
+
+Together the two cases demonstrate both contract-level abstention on invalid
+evidence and network-level refusal when independent validator judgments do not
+meet the equivalence rule.

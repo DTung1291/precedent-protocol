@@ -72,7 +72,7 @@ Validators do not approve a schema-only response. They independently repeat
 the semantic work. A write requires:
 
 - the same derived verdict;
-- contestability within an explicit tolerance;
+- contestability within the explicit 0–400 substantive-majority band;
 - the same `APPLY`, `DISTINGUISH`, `CONFLICT`, or `IRRELEVANT` relation for
   every submitted precedent;
 - independently verified evidence bytes matching every submitted SHA-256.

@@ -12,7 +12,8 @@ leader. Consensus accepts only when:
 
 1. both panels normalize safely;
 2. both panels derive the same verdict;
-3. contestability differs by at most 250 milli-points; and
+3. both substantive majority strengths fall in the same explicit 0–400
+   milli-point equivalence band; and
 4. every precedent receives the same semantic relation.
 
 This is deliberately stricter than checking JSON shape. A well-formed but
@@ -28,6 +29,13 @@ unsupported answer cannot pass merely because it uses an allowed enum.
 
 The five outputs form a small deliberative ensemble. Contract code calculates
 the majority and contestability. No LLM can directly set either field.
+
+A 3–2 panel and a 5–0 panel may differ in majority strength while reaching the
+same substantive judgment. Because the only possible substantive
+contestability values are 0, 200, and 400, validators treat that full range as
+one equivalence band only after the verdict and every precedent relation match.
+Verdict disagreement, including `ABSTAIN` versus a substantive result, still
+prevents the state transition.
 
 ## Error consensus
 

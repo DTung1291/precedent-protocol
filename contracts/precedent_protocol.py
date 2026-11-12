@@ -28,7 +28,10 @@ MAX_TOTAL_BYTES = 60000
 MAX_PRECEDENTS = 5
 MAX_ROUNDS = 3
 PANEL_SIZE = 5
-CONTESTABILITY_TOLERANCE = 250
+# A substantive five-lens majority can only produce 0, 200, or 400. Once
+# validators agree on the verdict and every precedent relation, differences
+# inside that full majority-strength band are equivalent for consensus.
+SUBSTANTIVE_CONTESTABILITY_BAND = 400
 LENSES = ("FACTS", "POLICY", "ADVERSARIAL", "PRECEDENT", "REMEDY")
 RELATIONS = ("APPLY", "DISTINGUISH", "CONFLICT", "IRRELEVANT")
 
@@ -521,7 +524,7 @@ class PrecedentProtocol(gl.Contract):
                     return False
                 if candidate["verdict"] != own["verdict"]:
                     return False
-                if abs(candidate["contestability_milli"] - own["contestability_milli"]) > CONTESTABILITY_TOLERANCE:
+                if abs(candidate["contestability_milli"] - own["contestability_milli"]) > SUBSTANTIVE_CONTESTABILITY_BAND:
                     return False
                 return _relation_vector(candidate) == _relation_vector(own)
             except Exception:

@@ -249,11 +249,13 @@ class PrecedentProtocolTests(unittest.TestCase):
         self.assertEqual(self.contract.get_round_count(), 0)
         self.assertEqual(self.contract.get_case(case_id)["status"], "READY")
 
-    def test_validator_contestability_outside_tolerance_prevents_write(self):
+    def test_same_verdict_majority_strengths_are_consensus_equivalent(self):
         case_id = self.open_ready_case()
         self.set_sender(CLAIMANT)
-        with self.assertRaises(ConsensusDisagreement):
-            self.decide(case_id, make_panel(winner_count=5), make_panel(winner_count=3))
+        round_id = self.decide(case_id, make_panel(winner_count=5), make_panel(winner_count=3))
+        report = self.contract.get_round(round_id)["report"]
+        self.assertEqual(report["verdict"], "CLAIMANT")
+        self.assertEqual(report["contestability_milli"], 0)
 
     def test_malformed_leader_panel_cannot_be_approved_by_valid_validator(self):
         case_id = self.open_ready_case()

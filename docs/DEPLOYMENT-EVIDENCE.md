@@ -19,6 +19,29 @@ Studio exposed all seven read methods and all four write methods after the
 deployment reached consensus. The source was hash-checked before it was loaded
 into Studio; the hash above is the exact deployed single-file contract.
 
+## V2 deployment
+
+V2 keeps the fail-closed verdict and precedent-relation checks while treating
+all substantive five-lens majority strengths (3–2, 4–1, and 5–0) as one
+explicit 0–400 contestability equivalence band. This removes false consensus
+failure when validators agree on the outcome and every precedent relation but
+differ only in the size of that majority.
+
+| Item | Immutable evidence |
+|---|---|
+| Network | GenLayer Studionet |
+| Execution mode | Normal (Full Consensus) |
+| Contract | [`0x2ccDE15D1504F7978fa46C2D82Ed44B603d6C0ec`](https://explorer-studio.genlayer.com/address/0x2ccDE15D1504F7978fa46C2D82Ed44B603d6C0ec) |
+| Deployment transaction | [`0x579ca5a0fe5a6cfc318100c027559cd9e30b1c3a6ebf7e631f94bdd174ca1b96`](https://explorer-studio.genlayer.com/tx/0x579ca5a0fe5a6cfc318100c027559cd9e30b1c3a6ebf7e631f94bdd174ca1b96) |
+| Consensus result | `ACCEPTED` |
+| Deployed source commit | [`767ff13904f20c625845afbf6acb4d9fe409ca47`](https://github.com/DTung1291/precedent-protocol/tree/767ff13904f20c625845afbf6acb4d9fe409ca47) |
+| Contract source | [`contracts/precedent_protocol.py`](https://github.com/DTung1291/precedent-protocol/blob/767ff13904f20c625845afbf6acb4d9fe409ca47/contracts/precedent_protocol.py) |
+| Source SHA-256 | `f0a54d3c751cba7baf949f39afa2c3a5945444677efb774ab659cbfe203e3ff0` |
+
+The source was transferred to Studio from its exact base64 representation and
+verified as 26,337 bytes with the SHA-256 above before deployment. Studio then
+reported `ACCEPTED`, `Reached consensus`, and `Contract deployed`.
+
 ## Live fail-closed scenario
 
 The first full two-party workflow is finalized on Studionet:
